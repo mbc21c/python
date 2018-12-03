@@ -1,0 +1,4 @@
+divmod(9, 5)
+
+a, b= divmod(9, 5)
+
