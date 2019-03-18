@@ -57,6 +57,7 @@ def croling_naver(str_keyword):
                     soup_detail = BeautifulSoup(cont_detail, 'html.parser')
                     for tag in soup_detail.find_all("meta"):
                         try:
+                            cnt = cnt + 1
                             if tag.get("property") == "og:title":
                                 title = tag.get("content")
                             elif tag.get("property") == "og:description":
