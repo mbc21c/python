@@ -65,7 +65,6 @@ def croling_naver(str_keyword):
                                 title = str(cnt) + "." + urls["title"]
                                 description = ''
 
-                            cnt = cnt + 1 
                         except exception as e:
                             print(e)
                         continue
