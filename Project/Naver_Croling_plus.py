@@ -2,15 +2,16 @@ import requests
 from bs4 import BeautifulSoup
 import datetime
 import os
+import time
+import random
 
-
-def get_naver_news(query, s_date, e_date, s_from, e_to):
+def get_naver_news(query, s_date, e_date, s_from, e_to, page):
     url = "https://search.naver.com/search.naver?where=news&query=" + query + "&sort=1&ds=" + s_date + "&de=" + e_date + "&nso=so%3Ar%2Cp%3Afrom" + s_from + "to" + e_to + "%2Ca%3A&start=" + str(page)
     #header 추가
     header = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
     }
-    req = requests.get(url,headers=header)
+    req = requests.get(url)
 
     return req.content
 
@@ -23,56 +24,58 @@ def get_detail_news(urls):
     #print(req_detail.content)
     return req_detail.content
 
-now = datetime.datetime.now()
-nowDate = now.strftime('%Y-%m-%d')
+def croling_naver():
+    nowdate = datetime.now()
+    nowdate = nowdate.strftime('%y-%m-%d')
 
-yesterday = now - datetime.timedelta(days=1)
-yesterdayDate = yesterday.strftime('%Y-%m-%d')
+    yesterday = nowdate - datetime.timedelta(days=2)
+    yesterdaydate = yesterday.strftime('%y-%m-%d')
 
-query = "해양경찰"   # url 인코딩 에러는 encoding parse.quote(query)
-s_date = yesterdayDate
-e_date = nowDate
-s_from = s_date.replace("-","")
-e_to = e_date.replace("-","")
-page = 1
-filepath = "c:/aa/" + str(e_to)
+    page = 1
+    query = '해양경찰'   # url 인코딩 에러는 encoding parse.quote(query)
+    s_date = yesterdaydate
+    e_date = nowdate
+    s_from = s_date.replace("-","")
+    e_to = e_date.replace("-","")
+    filepath = "c:/aa/" + str(e_to)
 
-if not(os.path.isdir(filepath)):
-    os.makedirs(os.path.join(filepath))
+    if not(os.path.isdir(filepath)):
+        os.makedirs(os.path.join(filepath))
 
-#f = open(filepath + "/"+ query + '_' + str(e_to) + '.txt', 'w', encoding='utf-8')
+    f = open(filepath + '/' + query + '_' + str(e_to) + '.txt', 'w', encoding='utf-8')
 
-while page < 500:
-    cont = get_naver_news(query, s_date, e_date, s_from, e_to)
-    soup = BeautifulSoup(cont, 'html.parser')
-    print(soup)
+    while page < 500:
+        cont = get_naver_news(query, s_date, e_date, s_from, e_to, page)
+        soup = BeautifulSoup(cont, 'html.parser')
+        print(soup)
+        time.sleep(2 + random.random() * 4)
+        for urls in soup.select("._sp_each_url"):
+            try:
+                if urls["href"].startswith("http://"):
+                    print("\n{}\n{}\n".format(urls["title"], urls["href"]))
+                    cont_detail = get_detail_news(urls["href"])
+                    soup_detail = BeautifulSoup(cont_detail, 'html.parser')
 
-    for urls in soup.select("._sp_each_url"):
-        try :
-            #print(urls["href"])
-            if urls["href"].startswith("http://"):
-                #print(urls["title"])
-                #news_detail = get_news(urls["href"])
-                    # pdate, pcompany, title, btext
-                print("\n{}\n{}\n".format(urls["title"], urls["href"]))
-                cont_detail = get_detail_news(urls["href"])
-                soup_detail = BeautifulSoup(cont_detail, 'html.parser')
-                #print("soup_detail" + str(soup_detail))
+                    for tag in soup_detail.find_all("meta"):
+                        if tag.get("property") == "og:title":
+                            title = tag.get("content")
+                        elif tag.get("property") == "og:description":
+                            description = tag.get("content")
+                        else:
+                            title = urls["title"]
+                            description = ''
 
+#                    print("\n{}\n{}\n".format(title, description))
+                    print(title)
+                    title = title.replace('"', '').replace('?', '').replace('\r', '').replace('\n', '').replace('<', '').replace('>', '').replace('/', '')
+                    print(title)
+                   # title = title.replace('/\r\n|\r|\n/', '')
+                    f = open(filepath + "/" + title + '.txt', 'w', encoding='utf-8')
+                    f.write("\n{}\n\n{}\n\n{}\n".format(title, urls["href"], description))
+                    f.close()
+            except exception as e:
+                print(e)
+            continue
+        page += 10
 
-                for tag in soup_detail.find_all("meta"):
-                    if tag.get("property", None) == "og:title":
-                        title = tag.get("content", None)
-                    elif tag.get("property", None) == "og:description":
-                        description = tag.get("content", None)
-
-                print("\n{}\n{}\n".format(title, description))
-                f = open(filepath + "/" + title + '.txt', 'w', encoding='utf-8')
-                f.write("\n{}\n\n{}\n\n{}\n".format(title, urls["href"], description))
-                f.close()
-        except Exception as e:
-            print(e)
-        continue
-    page += 10
-
-
+croling_naver()

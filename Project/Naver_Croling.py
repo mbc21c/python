@@ -1,4 +1,4 @@
-import requests
+from urllib.request import urlopen as uReq
 from bs4 import BeautifulSoup
 import datetime
 
@@ -8,11 +8,11 @@ def get_naver_news(query, s_date, e_date, s_from, e_to):
     url = "https://search.naver.com/search.naver?where=news&query=" + query + "&sort=1&ds=" + s_date + "&de=" + e_date + "&nso=so%3Ar%2Cp%3Afrom" + s_from + "to" + e_to + "%2Ca%3A&start=" + str(page)
     #header 추가
     header = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
     }
-    req = requests.get(url,headers=header)
+    req = uReq(url)
 
-    return req.content
+    return req
 
 now = datetime.datetime.now()
 nowDate = now.strftime('%Y-%m-%d')
@@ -31,6 +31,7 @@ f = open("C:/aa/" + query + '_' + str(e_to) + '.txt', 'w', encoding='utf-8')
 
 while page < 500:
     cont = get_naver_news(query, s_date, e_date, s_from, e_to)
+    print(cont.read())
     soup = BeautifulSoup(cont, 'html.parser')
     print(soup)
 
