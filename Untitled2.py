@@ -41,12 +41,12 @@ def croling_naver(str_keyword):
         os.makedirs(os.path.join(filepath))
 
     f = open(filepath + '/' + query + '_' + str(e_to) + '.txt', 'w', encoding='utf-8')
+    cnt = 0
 
     while page < 500:
         cont = get_naver_news(query, s_date, e_date, s_from, e_to, page)
         soup = BeautifulSoup(cont, 'html.parser')
         print(soup)
-        cnt = 0
 
         for urls in soup.select("._sp_each_url"):
             try:
