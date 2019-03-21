@@ -1,0 +1,20 @@
+﻿1. QT Designer 를 사용하여 UI 작성
+2. ui파일을 C:\Users\201함\AppData\Local\Programs\Python\Python36-32\Scripts\pyuic5.py 로 컴파일 하여 python 파일로 변환
+
+ex) 해당경로의 cmd 창에서
+python pyuic5.py untitled.ui -o out.py
+python -m PyQt5.uic.pyuic -x untitled.ui -o untitled.py
+
+3. 생성된 UI 파이썬 파일을 프로젝트에 추가
+
+
+FAQ
+err - This application failed to start because it could not find or load the Qt platform plugin "windows".
+
+
+Ans
+1. 제어판>시스템>고급 시스템 설정>고급>환경변수 에 들어간다.
+2. 시스템 변수 란에 새로운 환경변수를 생성한다.
+3. 새 환경변수의 이름은 QT_QPA_PLATFORM_PLUGIN_PATH 이고, 
+   내용은 (파이썬3이 설치되어있는 경로)\Lib\site-packages\PyQt5\Qt\plugins\platforms 이다.
+

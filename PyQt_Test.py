@@ -6,3 +6,10 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+import sys
+from PyQt5.QtWidgets import (QWidget, QPushButton, QLineEdit, QInputDialog, QApplication)
+
+app = QApplication([])
+dialog = QInputDialog()
+dialog.show()
+app.exec_()
