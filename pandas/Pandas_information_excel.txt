@@ -1,0 +1,8 @@
+1. 
+    df[from:to:step]
+    df[::2] - 짝수행
+    df[1::2] - 홀수행
+
+2.
+    read_excel('exm.xlsx')
+    to_excel('exm.xlsx')
