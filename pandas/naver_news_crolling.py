@@ -4,6 +4,7 @@ import datetime
 import requests
 import pandas as pd
 import re
+import os
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 < naver 뉴스 검색시 리스트 크롤링하는 프로그램 > _select사용
 - 크롤링 해오는 것 : 링크,제목,신문사,날짜,내용요약본
@@ -20,7 +21,16 @@ contents_text=[]
 result={}
 
 #엑셀로 저장하기 위한 변수
-RESULT_PATH ='C:/aa/'  #결과 저장할 경로
+RESULT_PATH = os.getcwd() + '/pandas/aa/'
+try:
+    if not(os.path.isdir(RESULT_PATH)):
+        os.makedirs(os.path.join(RESULT_PATH))
+except OSError as e:
+    if e.errno != errno.EEXIST:
+        print("Failed to create directory!!!!")
+        raise
+
+print(os.getcwd())
 now = datetime.datetime.now() #파일이름 현 시간으로 저장하기
 
 #날짜 정제화 함수
@@ -113,7 +123,7 @@ def crawler(maxpage,query,sort,s_date,e_date):
 
 def main():
     
-    maxpage = '50'  
+    maxpage = '40'  
     query = '해양경찰'
     sort = '1'    #관련도순=0  최신순=1  오래된순=2
 
