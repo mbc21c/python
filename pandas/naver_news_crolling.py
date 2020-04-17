@@ -21,7 +21,7 @@ contents_text=[]
 result={}
 
 #엑셀로 저장하기 위한 변수
-RESULT_PATH = os.getcwd() + '/pandas/aa/'
+RESULT_PATH = os.getcwd() + '/aa/'
 try:
     if not(os.path.isdir(RESULT_PATH)):
         os.makedirs(os.path.join(RESULT_PATH))
