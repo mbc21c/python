@@ -124,7 +124,7 @@ def crawler(maxpage,query,sort,s_date,e_date):
 def main():
     
     maxpage = '40'  
-    query = '해양경찰'
+    query = input('검색할 문자열을 입력하세요 : ')
     sort = '1'    #관련도순=0  최신순=1  오래된순=2
 
     nowt = datetime.datetime.now()
