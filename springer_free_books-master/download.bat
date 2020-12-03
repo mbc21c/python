@@ -1,7 +1,3 @@
-python main.py -c "Behavioral Science"
-python main.py -c "Behavioral Science and Psychology"
-python main.py -c "Biomedical and Life Sciences"
-python main.py -c "Business and Economics"
 python main.py -c "Business and Management"
 python main.py -c "Chemistry and Materials Science"
 python main.py -c "Computer Science"
