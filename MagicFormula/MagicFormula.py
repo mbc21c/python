@@ -126,8 +126,8 @@ if __name__ == "__main__":
     
     locale.setlocale(locale.LC_ALL, '') 
     
-    oldDate = '2020-09-01'
-    newDate = '2020-09-01'
+    oldDate = '2021-02-22'
+    newDate = '2021-02-22'
     
     resultOld, stockOld = CalMF(oldDate)    
     
@@ -149,7 +149,7 @@ if __name__ == "__main__":
 
     # HTML로 저장  
     result['등락'] = updown  
-    result.ix[1:100].to_html(newDate + '.rank')   
+    result.iloc[1:100].to_html(newDate + '.rank')   
     
     
     # table border = 0, 
