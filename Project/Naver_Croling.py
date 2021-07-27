@@ -1,53 +1,54 @@
-from urllib.request import urlopen as uReq
+import pandas as pd
+
+from selenium import webdriver
 from bs4 import BeautifulSoup
-import datetime
 
+import requests
 
+import os
 
-def get_naver_news(query, s_date, e_date, s_from, e_to):
-    url = "https://search.naver.com/search.naver?where=news&query=" + query + "&sort=1&ds=" + s_date + "&de=" + e_date + "&nso=so%3Ar%2Cp%3Afrom" + s_from + "to" + e_to + "%2Ca%3A&start=" + str(page)
-    #header 추가
-    header = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
-    }
-    req = uReq(url)
+import re
 
-    return req
+from datetime import datetime
 
-now = datetime.datetime.now()
-nowDate = now.strftime('%Y-%m-%d')
+query = input("뉴스 검색 키워드 입력 : ")
+query = query.replace("", "+")
 
-yesterday = now - datetime.timedelta(days=1)
-yesterdayDate = yesterday.strftime('%Y-%m-%d')
+news_num = int(input("크롤링 데이터 개수 입력 : "))
 
-query = "해양경찰"   # url 인코딩 에러는 encoding parse.quote(query)
-s_date = yesterdayDate
-e_date = nowDate
-s_from = s_date.replace("-","")
-e_to = e_date.replace("-","")
-page = 1
+news_url = "https://search.naver.com/search.naver?where=news&sm=tab_jum&query={}"
 
-f = open("C:/aa/" + query + '_' + str(e_to) + '.txt', 'w', encoding='utf-8')
+req = requests.get(news_url.format(query))
 
-while page < 500:
-    cont = get_naver_news(query, s_date, e_date, s_from, e_to)
-    print(cont.read())
-    soup = BeautifulSoup(cont, 'html.parser')
-    print(soup)
+soup = BeautifulSoup(req.text, "html.parser")
 
-    for urls in soup.select("._sp_each_url"):
-        try :
-            #print(urls["href"])
-            if urls["href"].startswith("http://"):
-                #print(urls["title"])
-                #news_detail = get_news(urls["href"])
-                    # pdate, pcompany, title, btext
-                print("\n{}\n{}\n".format(urls["title"], urls["href"]))
-                f.write("\n{}\n{}\n".format(urls["title"], urls["href"]))  # new style
-        except Exception as e:
-            print(e)
-            continue
-    page += 10
+news_dict = {}
+idx = 0
 
+cur_page = 1
 
-f.close()
+print("크롤링 시작")
+
+while idx < news_num:
+    table = soup.find("ul", {"class": "list_news"})
+    li_list = table.find_all("li", {"id": re.compile("sp_nws.*")})
+    area_list = [li.find("div", {"class": "news_area"}) for li in li_list]
+    a_list = [area.find("a", {"class": "news_tit"}) for area in area_list]
+
+    for n in a_list[: min(len(a_list), news_num - idx)]:
+        news_dict[idx] = {"title": n.get("title"), "url": n.get("href")}
+        idx += 1
+
+    cur_page += 1
+
+pages = soup.find("div", {"class": "sc_page_inner"})
+next_page_url = [p for p in pages.find_all("a") if p.text == str(cur_page)][0].get(
+    "href"
+)
+
+req = requests.get("https://serch.naver.com/search.naver" + next_page_url)
+soup = BeautifulSoup(req.text, "html.parser")
+
+news_df = pd.DataFrame(news_dict).T
+
+news_df.to_csv("D:/news.csv")
