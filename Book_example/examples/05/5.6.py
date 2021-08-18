@@ -1,6 +1,6 @@
 from os import listdir
 
-write_file = open('statistics.csv', 'w')
+write_file = open('statistics.csv', 'w', encoding='UTF8')
 write_file.write('년월,매출\n')
 
 csv_files = 'csv_files/'
@@ -12,7 +12,7 @@ for f_name in file_list:
         continue
 
     sum_value = 0
-    f = open(csv_files+f_name, 'r')
+    f = open(csv_files+f_name, 'r', encoding='UTF8')
     while True:
         row = f.readline()
         if not row:
